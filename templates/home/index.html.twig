@@ -3,18 +3,30 @@
 {% block title %}Hello HomeController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ 'C:/University/ESGI/Master 2/S1/API REST/api_rest_consumption/src/Controller/HomeController.php'|file_link(0) }}">src/Controller/HomeController.php</a></code></li>
-        <li>Your template at <code><a href="{{ 'C:/University/ESGI/Master 2/S1/API REST/api_rest_consumption/templates/home/index.html.twig'|file_link(0) }}">templates/home/index.html.twig</a></code></li>
-    </ul>
+    {% if enterprises is not empty %}
+        <table class="table table-hover ml-5">
+            <thead>
+                <tr>
+                <th scope="col">Raison Sociale</th>
+                <th scope="col">Siren</th>
+                <th scope="col">Siret</th>
+                <th scope="col">Adresse</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enterprise in enterprises %}
+                    <tr class="table-primary">
+                        <td>{{ enterprise.nom_raison_sociale }}</td>
+                        <td>{{ enterprise.siren }}</td>
+                        <td>{{ enterprise.siege.siret }}</td>
+                        <td>{{ enterprise.siege.adresse }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 </div>
 {% endblock %}
