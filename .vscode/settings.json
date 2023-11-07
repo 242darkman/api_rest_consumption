@@ -1,0 +1,12 @@
+{
+    "editor.formatOnSave": true,
+    "[php]": {
+        "editor.defaultFormatter": "junstyle.php-cs-fixer",
+        "editor.formatOnSave": true
+    },
+    "php-cs-fixer.executablePath": "chemin/vers/votre/php-cs-fixer", // Mettez le chemin vers l'exécutable php-cs-fixer
+    "php-cs-fixer.rules": "@Symfony",
+    "php-cs-fixer.allowRisky": false,
+    "php-cs-fixer.config": ".php_cs;C:/chemin/vers/votre/fichier/config", // Mettez le chemin vers votre fichier de configuration ou le nom si dans le même dossier
+    "php-cs-fixer.onsave": true
+}
