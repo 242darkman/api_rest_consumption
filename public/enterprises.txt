@@ -1,0 +1,20 @@
+{
+    "save_enterprises": {
+        "779834795": {
+            "siren": "779834795",
+            "siret": "77983479500014",
+            "Raison_sociale": "CARREFOUR VINCENT",
+            "Adresse": {
+                "Num": 0,
+                "Voie": "RUE DE LA REPUBLIQUE",
+                "Code_postal": "69002",
+                "Ville": "LYON 2EME",
+                "Geo_adresse": "0 RUE DE LA REPUBLIQUE 69002 LYON 2EME",
+                "GPS": {
+                    "Latitude": "45.761589",
+                    "Longitude": "4.835559"
+                }
+            }
+        }
+    }
+}

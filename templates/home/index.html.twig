@@ -50,3 +50,24 @@
 {% endif %}
 </div>
 {% endblock %}
+
+{% block javascripts %}
+<script>
+    // Attendez que le DOM soit chargé
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtenez toutes les lignes cliquables
+        var rows = document.querySelectorAll('.clickable');
+        
+        // Ajoutez un événement 'click' à chaque ligne
+        rows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                // Récupérez l'URL de l'attribut data-href
+                var url = this.dataset.href;
+                // Redirigez vers l'URL
+                window.location.href = url;
+            });
+        });
+    });
+</script>
+{% endblock %}
+

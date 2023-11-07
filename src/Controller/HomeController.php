@@ -46,4 +46,29 @@ class HomeController extends AbstractController
             'show_next' => $showNext,
         ]);
     }
+
+
+    #[Route('/save-enterprise/{siren}', name: 'save_enterprise')]
+    public function saveEnterprise(
+        string $siren,
+        EnterpriseApiConsumption $entrepriseApiConsumption,
+        EnterpriseStorageService $enterpriseStorageService,
+        EnterpriseDTOTransformer $enterpriseDTOTransformer
+    ): Response
+    {
+        $fetchEnterprises = $entrepriseApiConsumption->search($siren);
+        $enterpriseData = $enterpriseDTOTransformer->transform($fetchEnterprises['results']);
+
+        if (!$enterpriseData) {
+            throw $this->createNotFoundException('The enterprise does not exist');
+        }
+        
+
+        $enterpriseStorageService->storeInFileUnique($enterpriseData);
+
+        return $this->render('home/detail.html.twig', [
+            'enterprise' => $enterpriseData,
+        ]);
+    }
+
 }
