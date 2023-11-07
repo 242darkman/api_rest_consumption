@@ -13,7 +13,7 @@ class EnterpriseApiConsumption
     $this->client = $client;
   }
 
-  public function search(string $query): array
+  public function search(string $query, int $page = 1, int $perPage = 10): array
   {
     $response = $this->client->request(
       'GET',
@@ -21,8 +21,8 @@ class EnterpriseApiConsumption
       [
         'query' => [
           'q' => $query,
-          'per_page' => 10,
-          'page' => 1,
+          'per_page' => $perPage,
+          'page' => $page,
         ],
       ]
     );
@@ -31,6 +31,13 @@ class EnterpriseApiConsumption
       throw new \Exception('Failed to retrieve data from the API.');
     }
 
-    return $response->toArray();
+    $content = $response->getContent();
+    $enterprises = json_decode($content, true);
+
+    if (null === $enterprises) {
+      throw new \Exception('Failed to decode JSON data.');
+    }
+
+    return $enterprises;
   }
 }

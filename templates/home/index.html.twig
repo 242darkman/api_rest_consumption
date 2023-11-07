@@ -1,11 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Mes entreprises{% endblock %}
 
 {% block body %}
+<style>
+    .clickable {
+        cursor: pointer;
+    }
+</style>
+
 
 <div class="example-wrapper">
 
+{% if search_performed %}
     {% if enterprises is not empty %}
         <table class="table table-hover ml-5">
             <thead>
@@ -18,15 +25,28 @@
             </thead>
             <tbody>
                 {% for enterprise in enterprises %}
-                    <tr class="table-primary">
-                        <td>{{ enterprise.nom_raison_sociale }}</td>
+                    <tr class="table-primary clickable" data-href="{{ path('save_enterprise', { siren: enterprise.siren }) }}">
+                        <td>{{ enterprise.Raison_sociale }}</td>
                         <td>{{ enterprise.siren }}</td>
-                        <td>{{ enterprise.siege.siret }}</td>
-                        <td>{{ enterprise.siege.adresse }}</td>
+                        <td>{{ enterprise.siret }}</td>
+                        <td>{{ enterprise.Adresse.Geo_adresse }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>Aucun résultat trouvé pour la recherche "{{ search_term }}".</p>
     {% endif %}
+
+    <div class="d-flex justify-content-end my-3 column-gap-3">
+        {% if show_previous %}
+            <a href="{{ path('app_home', { search: search_term, page: current_page - 1 }) }}" class="btn btn-secondary">Précédent</a>
+        {% endif %}
+
+        {% if show_next %}
+            <a href="{{ path('app_home', { search: search_term, page: current_page + 1 }) }}" class="btn btn-secondary">Suivant</a>
+        {% endif %}
+</div>
+{% endif %}
 </div>
 {% endblock %}
