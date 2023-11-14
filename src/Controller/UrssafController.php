@@ -29,10 +29,12 @@ class UrssafController extends AbstractController
             $selectedContractType = $data['contractType'];
             
             $calculationResult = $urssafApiService->evaluate($grossSalary, $selectedContractType);
+           // dd($calculationResult);
             $employee_contribution = $calculationResult['employee_contribution']['nodeValue'];
             $employer_cost = $calculationResult['employer_cost']['nodeValue'];
             $gross_salary = $calculationResult['net_salary']['nodeValue'];
             $end_of_contract_indemnity = $selectedContractType === 'fixed_term' ? $calculationResult['end_of_contract_indemnity']['nodeValue'] : 0;
+            //$end_of_contract_indemnity = 10;
         }
 
         return $this->render('urssaf/index.html.twig', [

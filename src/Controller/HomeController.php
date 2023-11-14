@@ -40,13 +40,15 @@ class HomeController extends AbstractController
         $enterprises = [];
         $perPage = 10;
         $total_pages = 0;
-        $searchPerformed = false;
 
         if ($searchTerm !== "") {
             $requestToApi = $entrepriseApiConsumption->search($searchTerm, $page, $perPage);
             $enterprises = $enterpriseDTOTransformer->transformAll($requestToApi['results']);
             $total_pages = intval($requestToApi['total_pages'], 10);
-            $searchPerformed = true;
+
+            if(empty($enterprises)){
+                $this->addFlash('warning', 'Aucun résultat trouvé pour la recherche ' . $searchTerm);
+            }
         }
 
         $showPrevious = $page > 1;
@@ -55,7 +57,6 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'search_term' => $searchTerm,
             'enterprises' => $enterprises,
-            'search_performed' => $searchPerformed,
             'current_page' => $page,
             'show_previous' => $showPrevious,
             'show_next' => $showNext,
@@ -86,7 +87,6 @@ class HomeController extends AbstractController
         if (!$enterpriseData) {
             throw $this->createNotFoundException('The enterprise does not exist');
         }
-        
 
         $enterpriseStorageService->storeInFileUnique($enterpriseData);
 
