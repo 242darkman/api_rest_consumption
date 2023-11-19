@@ -7,10 +7,56 @@ import axios from 'axios';
 */
 /* stimulusFetch: 'lazy' */
 export default class extends Controller {
-    static targets = ['employeeContribution', 'employerCost', 'endOfContractIndemnity', 'netSalary', 'salaryRow', 'endOfContractIndemnityHeader'];
+    static targets = ['employeeContribution', 'employerCost', 'endOfContractIndemnity', 'netSalary', 'netSalaryHeader', 'salaryRow', 'endOfContractIndemnityHeader', 'totalCddSalaryContainer', 'grossSalaryContainer'];
+
+    updateUI(data) {
+        this.employeeContributionTarget.textContent = data.employee_contribution;
+        this.employerCostTarget.textContent = data.employer_cost;
+        this.endOfContractIndemnityTarget.textContent = data.end_of_contract_indemnity;
+        this.netSalaryTarget.textContent = data.gross_salary;
+    }
+
+    handleFormSubmission(event) {
+        event.preventDefault();
+        const formData = new FormData(this.element.querySelector('#urssafForm'));
+        
+        axios.post('/api/urssaf/calculate', formData)
+            .then(response => {
+                console.log(response.data);
+            this.updateUI(response.data);
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
     connect() {
+        console.log('urssaf_controller connected');
         this.updateDisplayOnLoad();
+        this.element.addEventListener('submit', this.handleFormSubmission.bind(this));
+    }
+
+    updateDisplayBasedOnType(contractType) {
+        const showEndOfContract = contractType === 'fixed_term';
+        this.endOfContractIndemnityTarget.style.display = showEndOfContract ? 'table-cell' : 'none';
+        this.endOfContractIndemnityHeaderTarget.style.display = showEndOfContract ? 'table-cell' : 'none';
+        this.totalCddSalaryContainerTarget.style.display = showEndOfContract ? 'block' : 'none';
+
+        if (showEndOfContract) {
+            this.grossSalaryContainerTarget.classList.remove('col-md-12');
+            this.grossSalaryContainerTarget.classList.add('col-md-6');
+        } else {
+            this.grossSalaryContainerTarget.classList.remove('col-md-6');
+            this.grossSalaryContainerTarget.classList.add('col-md-12');
+        }
+
+        this.netSalaryHeaderTarget.textContent = contractType === 'internship' ? 'Gratification minimale' : 'Salaire net';
+        this.resetValues();
+    }
+
+    resetValues() {
+        this.employeeContributionTarget.textContent = '0';
+        this.employerCostTarget.textContent = '0';
+        this.endOfContractIndemnityTarget.textContent = '0';
+        this.netSalaryTarget.textContent = '0';
     }
 
     updateDisplayOnLoad() {
@@ -20,50 +66,9 @@ export default class extends Controller {
         }
     }
 
-    updateDisplay() {
-        const selectedContractType = this.element.querySelector('input[name="salaire_input[contractType]"]:checked').value;
+    updateDisplay(event) {
+        const selectedContractType = event.target.value;
         this.updateDisplayBasedOnType(selectedContractType);
-    }
-
-    updateDisplayBasedOnType(contractType) {
-        const showEndOfContract = contractType === 'fixed_term';
-        this.endOfContractIndemnityTarget.style.display = showEndOfContract ? 'table-cell' : 'none';
-        this.endOfContractIndemnityHeaderTarget.style.display = showEndOfContract ? 'table-cell' : 'none';
-
-        this.netSalaryTarget.textContent = contractType === 'internship' ? 'Gratification minimale' : 'Salaire net';
-    }
-
-    fetchData() {
-        const grossSalaryInput = this.element.querySelector('input[name="salaire_input[grossSalary]"]');
-
-        if (grossSalaryInput) {
-            const grossSalary = grossSalaryInput.value;
-
-            axios.post('/api/urssaf/calculate', {
-                grossSalary: parseFloat(grossSalary),
-                contractType: selectedContractType
-            }).then(response => {
-                this.updateUI(response.data);
-            }).catch(error => console.error('Error:', error));
-        }
-    }
-
-    updateUI(data) {
-        if (data.error) {
-            console.error(data.error);
-            return;
-        }
-
-        this.employeeContributionTarget.textContent = data.employee_contribution;
-        this.employerCostTarget.textContent = data.employer_cost;
-        this.endOfContractIndemnityTarget.textContent = data.end_of_contract_indemnity;
-        this.netSalaryTarget.textContent = data.net_salary;
-    }
-
-    handleFormSubmission(event) {
-        event.preventDefault();
-        const selectedContractType = this.element.querySelector('input[name="salaire_input[contractType]"]:checked').value;
-        this.fetchData(selectedContractType);
     }
 
 

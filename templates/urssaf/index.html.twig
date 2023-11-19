@@ -7,21 +7,29 @@
     <div class="row justify-content-center">
         <div class="col-12 col-md-8">
             <h1 class="text-center mb-4">Calcul des cotisations URSSAF</h1>
-            {{ form_start(form, {'attr': {'class': 'text-center'}}) }}
+            {{ form_start(form, {'attr': {'class': 'text-center', 'id': 'urssafForm', 'data-action': 'submit->urssaf#handleFormSubmission'}}) }}
                 <h2>Type de contrat</h2>
                 <div class="d-flex flex-row justify-content-center mb-3">
                     {% for child in form.contractType %}
                         <div class="form-check form-check-inline">
-                            {{ form_widget(child, {'attr': {'class': 'form-check-input', 'data-action': 'urssaf#updateDisplay'}}) }}
+                            {{ form_widget(child, {'attr': {'class': 'form-check-input', 'data-action': 'change->urssaf#updateDisplay'}}) }}
                             {{ form_label(child, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }}
                         </div>
                     {% endfor %}
                 </div>
-                <div class="mt-4">
-                    {{ form_label(form.grossSalary, 'Votre salaire brut', {'label_attr': {'class': 'form-label'}}) }}
-                    {{ form_widget(form.grossSalary, {
-                        'attr': {'class': 'form-control mb-2 mx-auto', 'placeholder': 'Entrez votre salaire brut', 'style': 'max-width: 400px;'}
-                    }) }}
+                <div class="row mt-4">
+                    <div class="col-md-6" data-urssaf-target="grossSalaryContainer">
+                        {{ form_label(form.grossSalary, 'Votre salaire brut', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.grossSalary, {
+                            'attr': {'class': 'form-control mb-2 mx-auto', 'placeholder': 'Entrez votre salaire brut', 'style': 'max-width: 400px;'}
+                        }) }}
+                    </div>
+                    <div class="col-md-6" data-urssaf-target="totalCddSalaryContainer">
+                        {{ form_label(form.totalCddSalary, 'Total des salaires perçus durant le CDD', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.totalCddSalary, {
+                            'attr': {'class': 'form-control mb-2', 'placeholder': 'Entrez le total des salaires perçus'}
+                        }) }}
+                    </div>
                 </div>
                 <button class="btn btn-primary mt-2" type="submit">Faire le calcul</button>
             {{ form_end(form) }}
@@ -33,7 +41,7 @@
                         <th class="text-center">Cotisation salariale</th>
                         <th class="text-center">Coût employeur</th>
                         <th class="text-center" data-urssaf-target="endOfContractIndemnityHeader">Indemnité de fin de contrat</th>
-                        <th class="text-center" data-urssaf-target="netSalary">Salaire net</th>
+                        <th class="text-center" data-urssaf-target="netSalaryHeader">Salaire net</th>
                     </tr>
                 </thead>
                 <tbody>
