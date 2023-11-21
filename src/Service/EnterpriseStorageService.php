@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\DTO\AddressDTO;
+use App\DTO\EnterpriseDTO;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class EnterpriseStorageService
@@ -9,6 +11,14 @@ class EnterpriseStorageService
     private $session;
     private $filePath = 'enterprises.txt';
 
+    /**
+     * Stores the given enterprise data in the session.
+     *
+     * @param array $enterpriseData The enterprise data to store.
+     * @param SessionInterface $session The session object.
+     * @throws \Some_Exception_Class Description of the exception.
+     * @return void
+     */
     public function storeInSession(array $enterpriseData, SessionInterface $session): void
     {
         $existingEnterprises = $this->session->get('enterprises', []);
@@ -23,7 +33,13 @@ class EnterpriseStorageService
         $this->session->set('enterprises', serialize($existingEnterprises));
     }
 
-    public function storeInFileUnique($enterpriseData): void
+    /**
+     * Store enterprise data in a file, ensuring uniqueness based on the SIREN number.
+     *
+     * @param mixed $enterpriseData The data of the enterprise to be stored.
+     * @throws Exception If there is an error accessing or modifying the file.
+     */
+    public function storeInFileUnique($enterpriseData)
     {
         $siren = $enterpriseData->getSiren();
 
@@ -37,19 +53,21 @@ class EnterpriseStorageService
             $saveData['save_enterprises'] = $decodedContents['save_enterprises'] ?? [];
         }
 
+        $address = $enterpriseData->getAdresse();
+
         $saveData['save_enterprises'][$siren] = [
             'siren' => $siren,
             'siret' => $enterpriseData->getSiret(),
             'Raison_sociale' => $enterpriseData->getRaisonSociale(),
             'Adresse' => [
-                'Num' => $enterpriseData->getAdresse()["Num"],
-                'Voie' => $enterpriseData->getAdresse()["Voie"],
-                'Code_postal' => $enterpriseData->getAdresse()["Code_postal"],
-                'Ville' => $enterpriseData->getAdresse()["Ville"],
-                'Geo_adresse' => $enterpriseData->getAdresse()["Geo_adresse"],
+                'Num' => $address['Num'],
+                'Voie' => $address['Voie'],
+                'Code_postal' => $address['Code_postal'],
+                'Ville' => $address['Ville'],
+                'Geo_adresse' => $address['Geo_adresse'],
                 'GPS' => [
-                    'Latitude' => $enterpriseData->getAdresse()["GPS"]['Latitude'],
-                    'Longitude' => $enterpriseData->getAdresse()["GPS"]['Longitude'],
+                    'Latitude' => $address['GPS']['Latitude'],
+                    'Longitude' => $address['GPS']['Longitude'],
                 ]
             ]
         ];
@@ -57,6 +75,8 @@ class EnterpriseStorageService
         $jsonData = json_encode($saveData, JSON_PRETTY_PRINT);
         file_put_contents($this->filePath, $jsonData);
 
+        return $saveData['save_enterprises'][$siren];
+    }
 
 
     /**
@@ -155,6 +175,26 @@ class EnterpriseStorageService
             $gpsArray
         );
     }
+
+    /**
+     * Deletes an enterprise from the list of enterprises based on its SIREN.
+     *
+     * @param string $siren The SIREN of the enterprise to be deleted.
+     * @throws \Exception if no enterprise is found with the given SIREN.
+     * @return void
+     */
+    public function deleteEnterprise($siren) {
+        $enterprises = $this->loadEnterprises();
+
+        unset($enterprises[$siren]);
+
+        if (empty($enterprises)) {
+            unlink($this->filePath);
+            return;
+        } 
+
+        $jsonData = json_encode(['save_enterprises' => $enterprises], JSON_PRETTY_PRINT);
+        file_put_contents($this->filePath, $jsonData);
     }
 
 

@@ -59,6 +59,37 @@ class ApiProtegeController extends AbstractController
             return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    #[Route('/api-protege.php', name: 'api_protege_delete', methods: ['DELETE'])]
+    public function delete(Request $request, EnterpriseStorageService $enterpriseStorageService): Response
+    {
+        $token = $this->tokenStorage->getToken();
+        $data = json_decode($request->getContent(), true);
+
+
+        if (null === $token || !$this->authorizationChecker->isGranted('ROLE_API')) {
+            return new JsonResponse(['message' => 'Non authentifié'], Response::HTTP_UNAUTHORIZED);
+        }
+
+
+        if (null === $data) {
+            return new JsonResponse(['message' => 'Format JSON invalide'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $idEnterprise = $data['siren'];
+        $enterprises = $enterpriseStorageService->loadEnterprises();
+        if (!isset($enterprises[$idEnterprise])) {
+            return new JsonResponse(['message' => 'Aucune entreprise avec ce SIREN'], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            $enterpriseStorageService->deleteEnterprise($idEnterprise);
+            return new JsonResponse(['message' => 'Entreprise supprimée avec succès'], Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     /**
      * Retrieves a list of enterprises from the storage service.
      *

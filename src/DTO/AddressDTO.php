@@ -50,4 +50,19 @@ class AddressDTO
   {
     return $this->gps;
   }
+
+  public function toArray(): array
+    {
+        return [
+            'Num' => $this->number,
+            'Voie' => $this->street,
+            'Code_postal' => $this->postalCode,
+            'Ville' => $this->city,
+            'Geo_adresse' => $this->geo_adresse,
+            'GPS' => [
+                'Latitude' => $this->gps['Latitude'],
+                'Longitude' => $this->gps['Longitude'],
+            ],
+        ];
+    }
 }
