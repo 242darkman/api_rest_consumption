@@ -1,7 +1,11 @@
 <?php
 
+/************************************************************************************************
+ *      This files contains utils functions that allows us to retrieve all saved enterprises
+ ***********************************************************************************************/
+
 /**
- * Handle the GET request
+ * Handle the GET request from user
  */
 function handleGetRequest($format) {
     if (!isValidFormat($format)) {
