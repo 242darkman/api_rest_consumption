@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calcul des cotisations URSSAF{% endblock %}
+
+{% block body %}
+<div class="container my-5" data-controller="urssaf">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+            <h1 class="text-center mb-4">Calcul des cotisations URSSAF</h1>
+            {{ form_start(form, {'attr': {'class': 'text-center'}}) }}
+                <h2>Type de contrat</h2>
+                <div class="d-flex flex-row justify-content-center mb-3">
+                    {% for child in form.contractType %}
+                        <div class="form-check form-check-inline">
+                            {{ form_widget(child, {'attr': {'class': 'form-check-input', 'data-action': 'urssaf#updateDisplay'}}) }}
+                            {{ form_label(child, null, {'label_attr': {'class': 'form-check-label ms-2'}}) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="mt-4">
+                    {{ form_label(form.grossSalary, 'Votre salaire brut', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.grossSalary, {
+                        'attr': {'class': 'form-control mb-2 mx-auto', 'placeholder': 'Entrez votre salaire brut', 'style': 'max-width: 400px;'}
+                    }) }}
+                </div>
+                <button class="btn btn-primary mt-2" type="submit">Faire le calcul</button>
+            {{ form_end(form) }}
+
+            <h2 class="text-center mt-5">Résultats</h2>
+            <table class="table table-striped mx-auto" style="max-width: 800px;">
+                <thead>
+                    <tr>
+                        <th class="text-center">Cotisation salariale</th>
+                        <th class="text-center">Coût employeur</th>
+                        <th class="text-center" data-urssaf-target="endOfContractIndemnityHeader">Indemnité de fin de contrat</th>
+                        <th class="text-center" data-urssaf-target="netSalary">Salaire net</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-urssaf-target="salaryRow">
+                        <td class="text-center" data-urssaf-target="employeeContribution">{{ employee_contribution }}</td>
+                        <td class="text-center" data-urssaf-target="employerCost">{{ employer_cost }}</td>
+                        <td class="text-center" data-urssaf-target="endOfContractIndemnity">{{ end_of_contract_indemnity }}</td>
+                        <td class="text-center" data-urssaf-target="netSalary">{{ gross_salary }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

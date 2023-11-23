@@ -1,32 +1,61 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Mes entreprises{% endblock %}
 
 {% block body %}
 
-<div class="example-wrapper">
+    <div class="example-wrapper">
 
-    {% if enterprises is not empty %}
-        <table class="table table-hover ml-5">
-            <thead>
-                <tr>
-                <th scope="col">Raison Sociale</th>
-                <th scope="col">Siren</th>
-                <th scope="col">Siret</th>
-                <th scope="col">Adresse</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for enterprise in enterprises %}
-                    <tr class="table-primary">
-                        <td>{{ enterprise.nom_raison_sociale }}</td>
-                        <td>{{ enterprise.siren }}</td>
-                        <td>{{ enterprise.siege.siret }}</td>
-                        <td>{{ enterprise.siege.adresse }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-</div>
+        <div class="text-center">
+            {% for message in app.flashes('warning') %}
+                <div class="alert alert-warning"> {{ message }}</div>
+            {% endfor %}
+        </div>
+
+            {% if enterprises is not empty %}
+                <table class="table table-hover ml-5">
+                    <thead>
+                        <tr>
+                        <th scope="col">Raison Sociale</th>
+                        <th scope="col">Siren</th>
+                        <th scope="col">Siret</th>
+                        <th scope="col">Adresse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enterprise in enterprises %}
+                            <tr class="table-primary">
+                                <td>
+                                    <a href="{{ path('save_enterprise', {'siren': enterprise.siren}) }}">{{ enterprise.Raison_sociale }}</a>
+                                </td>
+                                 <td>
+                                    <a href="{{ path('save_enterprise', {'siren': enterprise.siren}) }}">{{ enterprise.siren }}</a>
+                                </td>
+                                 <td>
+                                    <a href="{{ path('save_enterprise', {'siren': enterprise.siren}) }}">{{ enterprise.siret }}</a>
+                                </td>
+                                 <td>
+                                    <a href="{{ path('save_enterprise', {'siren': enterprise.siren}) }}">{{ enterprise.Adresse.Geo_adresse }}</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+
+            <div class="d-flex justify-content-end my-3 column-gap-3">
+                {% if show_previous %}
+                    <a href="{{ path('app_home', { search: search_term, page: current_page - 1 }) }}" class="btn btn-secondary">Précédent</a>
+                {% endif %}
+
+                {% if show_next %}
+                    <a href="{{ path('app_home', { search: search_term, page: current_page + 1 }) }}" class="btn btn-secondary">Suivant</a>
+                {% endif %}
+            </div>
+    </div>
+
 {% endblock %}
+
+{% block javascripts %}
+{% endblock %}
+
