@@ -2,6 +2,10 @@
 
 use Exception as RequestException;
 
+/************************************************************************************************
+ *      This files contains utils functions that allows us to retrieve a specific enterprise
+ ***********************************************************************************************/
+
 /**
  * Handles the GET request from the user
  */
