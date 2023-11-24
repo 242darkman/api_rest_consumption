@@ -57,9 +57,9 @@ function decodeEnterpriseContent($content) {
  * Finds and sends the enterprise information if available
  */
 function findAndSendEnterprise($enterpriseList, $siren) {
-    foreach ($enterpriseList['save_enterprises'] as $enterprise) {
-        if ($enterprise['siren'] === $siren) {
-            sendResponse(200, ['enterprise' => $enterprise]);
+    foreach ($enterpriseList['save_enterprises'] as $enterpriseId => $enterprise) {
+        if ($enterpriseId == $siren) {
+            sendResponse(200, ['enterprise' => [$enterprise]]);
             return;
         }
     }
