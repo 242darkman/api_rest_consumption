@@ -8,6 +8,9 @@ $validUsers = [
     'apiuser' => password_hash('apipassword', PASSWORD_BCRYPT)
 ];
 
+/**
+ * Basic authentication
+ */
 function authenticate($validUsers, $serverAuthUser, $serverAuthPw) {
     if (!isset($serverAuthUser, $serverAuthPw)) {
         header('WWW-Authenticate: Basic realm="Restricted Area"');
@@ -19,7 +22,7 @@ function authenticate($validUsers, $serverAuthUser, $serverAuthPw) {
     $pass = $serverAuthPw;
 
     if (!isset($validUsers[$user]) || !password_verify($pass, $validUsers[$user])) {
-        sendResponse(401, ["erreur" => "Accès non authorisé"]);
+        sendResponse(401, ["erreur" => "Login ou mot de passe invalide"]);
         return false;
     }
 
