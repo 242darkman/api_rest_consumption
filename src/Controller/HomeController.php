@@ -9,24 +9,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Service\EnterpriseApiConsumption;
 use App\Service\EnterpriseDTOTransformer;
 use App\Service\EnterpriseStorageService;
-use App\Service\UrssafApiService;
 
 class HomeController extends AbstractController
 {
-    private $expressions = [];
-
-    public function __construct()
-    {
-        $this->expressions = [
-            'cdi' => 'salarié . rémunération . net . à payer avant impôt',
-            'stage' => 'salarié . contrat . stage . gratification minimale',
-            'apprentissage' => 'salarié . contrat . apprentissage',
-            'cdd' => 'salarié . rémunération . net . à payer avant impôt',
-            'cotisation_salariale' => 'salarié . cotisations . salarié',
-            'cout_employeur' => 'salarié . coût total employeur',
-            'indemnite_fin_contrat_cdd' => 'salarié . contrat . CDD . indemnité de fin de contrat',
-        ];
-    }
 
     #[Route('/', name: 'app_home')]
     public function index(
@@ -66,15 +51,6 @@ class HomeController extends AbstractController
             'show_previous' => $showPrevious,
             'show_next' => $showNext,
         ]);
-    }
-
-    public function calculateNetSalary(int $grossSalary, UrssafApiService $urssafApiService)
-    {
-        $netSalaryCDI = $urssafApiService->calculateNetSalaryByStatus($grossSalary, 'CDI', $this->expressions['cdi']);
-        $netSalaryTrainee = $urssafApiService->calculateNetSalaryByStatus($grossSalary, 'stage', $this->expressions['stage']);
-        $netSalaryWorkStudyStudent = $urssafApiService->calculateNetSalaryByStatus($grossSalary, 'apprentissage', $this->expressions['apprentissage']);
-        $netSalaryCDD = $urssafApiService->calculateNetSalaryByStatus($grossSalary, 'CDD', $this->expressions['cdd']);
-        $employer_cost = $urssafApiService->calculateNetSalaryByStatus($grossSalary, 'CDD', $this->expressions['cdd']);
     }
 
 

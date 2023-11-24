@@ -4,14 +4,14 @@ namespace App\DTO;
 
 class AddressDTO
 {
-  public int $number;
-  public string $street;
-  public string $postalCode;
-  public string $city;
-  public string $geo_adresse;
-  public array $gps;
+  public ?int $number;
+  public ?string $street;
+  public ?string $postalCode;
+  public ?string $city;
+  public ?string $geo_adresse;
+  public ?array $gps;
 
-  public function __construct($number, $street, $postalCode, $city, $geo_adresse, $gps)
+  public function __construct(?int $number, ?string $street, ?string $postalCode, ?string $city, ?string $geo_adresse, ?array $gps)
   {
     $this->number = $number;
     $this->street = $street;
