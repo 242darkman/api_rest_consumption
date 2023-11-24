@@ -58,6 +58,7 @@ class HomeController extends AbstractController
             'search_term' => $searchTerm,
             'enterprises' => $enterprises,
             'current_page' => $page,
+            'total_pages' => $total_pages,
             'show_previous' => $showPrevious,
             'show_next' => $showNext,
         ]);

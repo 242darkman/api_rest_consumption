@@ -5,6 +5,11 @@
 {% block body %}
 
     <div class="example-wrapper">
+        <div class="sketchy-banner mb-4">
+            <h2 class="text-center">Bienvenue sur la page de Gestion des Entreprises</h2>
+            <p class="text-center">Ici, vous pouvez rechercher et afficher des informations sur différentes entreprises.</p>
+        </div>
+
 
         <div class="text-center">
             {% for message in app.flashes('warning') %}
@@ -43,15 +48,22 @@
                 </table>
             {% endif %}
 
-            <div class="d-flex justify-content-end my-3 column-gap-3">
-                {% if show_previous %}
-                    <a href="{{ path('app_home', { search: search_term, page: current_page - 1 }) }}" class="btn btn-secondary">Précédent</a>
-                {% endif %}
 
-                {% if show_next %}
-                    <a href="{{ path('app_home', { search: search_term, page: current_page + 1 }) }}" class="btn btn-secondary">Suivant</a>
+            <div class="d-flex justify-content-between align-items-center my-3">
+                {% if enterprises is not empty %}
+                    <p>Page {{ current_page }} sur {{ total_pages }}</p>
                 {% endif %}
+                
+                <div class="d-flex column-gap-3">
+                    {% if show_previous %}
+                        <a href="{{ path('app_home', { search: search_term, page: current_page - 1 }) }}" class="btn btn-secondary">Précédent</a>
+                    {% endif %}
+                    {% if show_next %}
+                        <a href="{{ path('app_home', { search: search_term, page: current_page + 1 }) }}" class="btn btn-secondary">Suivant</a>
+                    {% endif %}
+                </div>
             </div>
+
     </div>
 
 {% endblock %}
