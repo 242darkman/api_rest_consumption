@@ -3,12 +3,12 @@
 ## Installation de dépendances
 ```bash
 composer install
-yarn install      # npm install
+npm install
 ```
 
 ## Compiler les assets avec Webpack Encore
 ```bash
-yarn encore dev    # ou npm run dev
+npm run watch
 ```
 
 ## Démarrer le projet
