@@ -25,14 +25,14 @@
 
 
         <div class="container mt-4">
-            {% for flashMessage in app.flashes('error') %}
+            {% for message in app.flashes('error') %}
                 <div class="alert alert-danger">
-                    {{ flashMessage }}
+                    {{ message }}
                 </div>
             {% endfor %}
-            {% for flashMessage in app.flashes('warning') %}
+            {% for message in app.flashes('warning') %}
                 <div class="alert alert-warning">
-                    {{ flashMessage }}
+                    {{ message }}
                 </div>
             {% endfor %}
         </div>
