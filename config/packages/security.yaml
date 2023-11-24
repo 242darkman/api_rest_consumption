@@ -15,18 +15,18 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
-        api_protected:
-            pattern: ^/api-protege.php
-            stateless: true
-            http_basic:
-                provider: users_in_memory
+        # api_protected:
+        #     pattern: ^/api-protege.php
+        #     stateless: true
+        #     http_basic:
+        #         provider: users_in_memory
 
         main:
             lazy: true
             provider: users_in_memory
 
-    access_control:
-        - { path: ^/api-protege.php, roles: ROLE_API }
+    # access_control:
+    #     - { path: ^/api-protege.php, roles: ROLE_API }
 
 when@test:
     security:
