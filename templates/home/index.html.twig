@@ -24,9 +24,16 @@
         </div>
 
 
-        <div class="text-center">
-            {% for message in app.flashes('warning') %}
-                <div class="alert alert-warning"> {{ message }}</div>
+        <div class="container mt-4">
+            {% for flashMessage in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ flashMessage }}
+                </div>
+            {% endfor %}
+            {% for flashMessage in app.flashes('warning') %}
+                <div class="alert alert-warning">
+                    {{ flashMessage }}
+                </div>
             {% endfor %}
         </div>
 

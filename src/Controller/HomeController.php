@@ -41,13 +41,17 @@ class HomeController extends AbstractController
         $perPage = 10;
         $total_pages = 0;
 
-        if ($searchTerm !== "") {
-            $requestToApi = $entrepriseApiConsumption->search($searchTerm, $page, $perPage);
-            $enterprises = $enterpriseDTOTransformer->transformAll($requestToApi['results']);
-            $total_pages = intval($requestToApi['total_pages'], 10);
+        if (strlen($searchTerm) < 3 && $searchTerm !== "") {
+            $this->addFlash('error', 'La chaîne de recherche doit comporter au moins 3 caractères.');
+        } else {
+            if ($searchTerm !== "") {
+                $requestToApi = $entrepriseApiConsumption->search($searchTerm, $page, $perPage);
+                $enterprises = $enterpriseDTOTransformer->transformAll($requestToApi['results']);
+                $total_pages = intval($requestToApi['total_pages'], 10);
 
-            if(empty($enterprises)){
-                $this->addFlash('warning', 'Aucun résultat trouvé pour la recherche ' . $searchTerm);
+                if(empty($enterprises)){
+                    $this->addFlash('warning', 'Aucun résultat trouvé pour la recherche ' . $searchTerm);
+                }
             }
         }
 
