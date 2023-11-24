@@ -68,6 +68,28 @@ function handlePatchRequest($filename) {
     updateEnterprise($allEnterprises, $data, $filename);
 }
 
+/**
+ * Processes DELETE requests
+ */
+function handleDeleteRequest($filename) {
+    $data = getJsonInputData();
+
+    $sirenKey = getSirenKey($data);
+    if (!$sirenKey || !preg_match('/^[0-9]{9}$/', $data[$sirenKey])) {
+        sendResponse(400, ["erreur" => "SIREN invalide"]);
+        return;
+    }
+
+    $allEnterprises = getEnterprisesData($filename);
+    $siren = $data[$sirenKey];
+    if (!isset($allEnterprises['save_enterprises'][$siren])) {
+        sendResponse(404, ["erreur" => "Entreprise non trouvée"]);
+        return;
+    }
+
+    deleteEnterprise($allEnterprises, $siren, $filename);
+}
+
 function getSirenKey($data) {
     foreach ($data as $key => $value) {
         if (strtolower($key) === 'siren') {
@@ -140,7 +162,6 @@ function updateEnterprise(&$allEnterprises, $updates, $filename) {
                 continue;
             }
 
-            // Mise à jour directe pour les valeurs non-tableau
             $allEnterprises['save_enterprises'][$siren][$originalKey] = $value;
         }
     }
@@ -155,3 +176,34 @@ function updateEnterprise(&$allEnterprises, $updates, $filename) {
         ],
     ]);
 }
+
+
+/**
+ * Delete an enterprise
+ */
+function deleteEnterprise(&$allEnterprises, $siren, $filename) {
+    unset($allEnterprises['save_enterprises'][$siren]);
+
+    if (empty($allEnterprises)) {
+        unlink($filename);
+        sendResponse(200, ["message" => "Entreprise supprimée et fichier supprimé"]);
+        return;
+    }
+
+    file_put_contents($filename, json_encode($allEnterprises, JSON_PRETTY_PRINT));
+    sendResponse(200, ["message" => "Entreprise supprimée"]);
+}
+
+
+/**
+ * Sends an HTTP response with the given status code and data
+ */
+function sendResponse($statusCode, $data) {
+    http_response_code($statusCode);
+    header('Content-Type: application/json');
+    echo json_encode($data, JSON_PRETTY_PRINT);
+}
+
+handleRequest($filename, $_SERVER['REQUEST_METHOD'], $validUsers, $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']);
+
+?>

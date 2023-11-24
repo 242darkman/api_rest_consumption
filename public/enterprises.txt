@@ -63,20 +63,6 @@
                     "Longitude": "9.440866"
                 }
             }
-        },
-        "123456789": {
-            "Siren": "123456789",
-            "Raison_sociale": "GOATNESS",
-            "Adresse": {
-                "Num": 3,
-                "Voie": "Rue de la paix",
-                "Code_postale": "54061",
-                "Ville": "Lyon",
-                "GPS": {
-                    "Latitude": "4.1",
-                    "Longitude": "38.4"
-                }
-            }
         }
     }
 }
