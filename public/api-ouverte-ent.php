@@ -13,19 +13,19 @@ function handleGetRequest($get) {
     $siren = getSirenParameter($get);
 
     if (!$siren) {
-        sendErrorResponse(400, "Erreur 400 : Le paramètre 'siren' est requis.");
+        sendResponse(400, ['Erreur' => "Le paramètre 'siren' est obligatoire"]);
         return;
     }
 
     $content = readEnterpriseFile();
     if ($content === false) {
-        sendErrorResponse(500, "Erreur 500 : Problème lors de l'ouverture du fichier");
+        sendResponse(500, ['Erreur' => "Problème lors de l'ouverture du fichier"]);
         return;
     }
 
     $enterpriseList = decodeEnterpriseContent($content);
     if ($enterpriseList === null) {
-        sendErrorResponse(500, "Erreur 500 : Problème lors de la conversion du contenu en JSON");
+        sendResponse(500, ['Erreur' => "Problème lors de la conversion du contenu en JSON"]);
         return;
     }
 
@@ -59,29 +59,20 @@ function decodeEnterpriseContent($content) {
 function findAndSendEnterprise($enterpriseList, $siren) {
     foreach ($enterpriseList['save_enterprises'] as $enterprise) {
         if ($enterprise['siren'] === $siren) {
-            sendEnterpriseResponse($enterprise);
+            sendResponse(200, ['enterprise' => $enterprise]);
             return;
         }
     }
-    echo "Aucune entreprise trouvée, la liste est vide";
+    sendResponse(200, ['enterprise' => []]);
 }
 
 /**
  * Sends an error response with a specific status code and message
  */
-function sendErrorResponse($statusCode, $message) {
-    header("HTTP/1.1 $statusCode");
-    echo $message;
-    throw new RequestException($message);
-}
-
-/**
- * Sends the enterprise information as a JSON response
- */
-function sendEnterpriseResponse($enterprise) {
-    header('HTTP/1.1 200 OK');
+function sendResponse($statusCode, $data) {
+    http_response_code($statusCode);
     header('Content-Type: application/json');
-    echo json_encode($enterprise, JSON_PRETTY_PRINT);
+    echo json_encode($data, JSON_PRETTY_PRINT);
 }
 
 /**
@@ -95,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         error_log($e->getMessage());
     }
 } else {
-    sendErrorResponse(405, "Erreur 405 : Méthode non autorisée");
+    sendResponse(405, ['message' => 'Méthode non autorisée']);
 }
 
 ?>

@@ -7,16 +7,23 @@
 /**
  * Handle the GET request from user
  */
-function handleGetRequest($format) {
+function handleGetRequest($get) {
+    if (!isset($get['format'])){
+        sendResponse(400, ["Erreur" => "le paramètre 'format' est obligatoire."]);
+        return;
+    }
+
+    $format = $get['format'];
+
     if (!isValidFormat($format)) {
-        sendErrorResponse(406, "Format non valide");
+        sendResponse(406, ["Erreur" => "Le paramètre 'format' doit être 'json' ou 'csv'."]);
         return;
     }
 
     $content = file_get_contents('enterprises.txt');
 
     if (filesize('enterprises.txt') <= 0) {
-        echo "Aucune entreprise trouvée, la liste est vide";
+        sendResponse(200, ["enterprises" => []]);
         return;
     }
 
@@ -41,9 +48,18 @@ function isValidFormat($format) {
  * Send a JSON response
  */
 function sendJsonResponse($content) {
-    header('Content-Type: application/json');
-    echo $content;
+    $decodedContent = json_decode($content, true); // Décode le contenu JSON en tableau PHP
+
+    if ($decodedContent === null && json_last_error() !== JSON_ERROR_NONE) {
+        sendResponse(500, ["Erreur" => "Erreur de décodage JSON: " . json_last_error_msg()]);
+        return;
+    }
+
+    sendResponse(200, ["enterprises" => $decodedContent['save_enterprises']]);
 }
+
+
+
 
 /**
  * Send a CSV response
@@ -85,18 +101,19 @@ function outputCsvContent($enterprises) {
 /**
  * Send an error response
  */
-function sendErrorResponse($statusCode, $message) {
-    header("HTTP/1.1 $statusCode");
-    echo $message;
+function sendResponse($statusCode, $data) {
+    http_response_code($statusCode);
+    header('Content-Type: application/json');
+    echo json_encode($data, true);
 }
 
 /**
  * Check if the request method is GET
  */
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    handleGetRequest($_GET['format']);
+    handleGetRequest($_GET);
 } else {
-    sendErrorResponse(405, "Erreur 405 : Méthode non autorisée");
+    sendResponse(405, ['Erreur' => "Méthode non autorisée"]);
 }
 
 ?>

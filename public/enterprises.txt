@@ -48,19 +48,5 @@
                 }
             }
         }
-    },
-    "123456789": {
-        "Siren": "123456789",
-        "Raison_sociale": "Ma Soci\u00e9t\u00e9",
-        "Adresse": {
-            "Num": 3,
-            "Voie": "Rue de la paix",
-            "Code_postale": "54234",
-            "Ville": "Lyon",
-            "GPS": {
-                "Latitude": "XX.XX",
-                "Longitude": "XX.XX"
-            }
-        }
     }
 }
