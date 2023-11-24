@@ -1,50 +1,118 @@
 <?php
 
-// Chemin vers le fichier de stockage des entreprises
+// File path for storing enterprises data
 $filename = 'enterprises.txt';
 
-// Vérifier si la requête est de type POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+/**
+ * Handles the main request flow
+ */
+function handleRequest($filename, $requestMethod) {
+    if ($requestMethod !== 'POST') {
+        sendResponse(405, ["erreur" => "Méthode non autorisée"]);
+        return;
+    }
+    handlePostRequest($filename);
+}
 
-    // Récupérer les données JSON de la requête
-    $jsonData = file_get_contents('php://input');
-    $data = json_decode($jsonData, true);
+/**
+ * Processes POST requests
+ */
+function handlePostRequest($filename) {
+    $data = getJsonInputData();
 
-    // Vérifier si le format JSON est valide et les données nécessaires sont présentes
-    if ($data && isset($data['Siren'], $data['Raison_sociale'], $data['Adresse'])) {
-
-        // Lire le contenu du fichier des entreprises
-        $enterprises = file_get_contents($filename);
-        $enterprises = json_decode($enterprises, true);
-
-        // Vérifier si l'entreprise existe déjà
-        if (isset($enterprises[$data['Siren']])) {
-            http_response_code(409); // Conflict
-            echo "Erreur 409 :Entreprise existe déjà";
-        } else {
-            // Ajouter la nouvelle entreprise
-            $enterprises[$data['Siren']] = $data;
-
-            // Enregistrer les entreprises mises à jour dans le fichier
-            file_put_contents($filename, json_encode($enterprises, JSON_PRETTY_PRINT));
-
-            // Répondre avec un code 201 (Created)
-            http_response_code(201);
-            echo json_encode(['message' => 'Entreprise créée']);
-        }
-
-    } else {
-        // Données JSON invalides ou manquantes
-        header('HTTP/1.1 400 Method Not Allowed');
-        echo "Erreur 405 : Format JSON invalide ou données manquantes";
-        exit();
+    if (!isValidData($data)) {
+        sendResponse(400, ["erreur" => "Format JSON invalide ou données manquantes"]);
+        return;
     }
 
-} else {
-   // Méthode HTTP non autorisée
-   header('HTTP/1.1 405 Method Not Allowed');
-   echo "Erreur 405 : Méthode non autorisée";
-   exit();
+    $allEnterprises = getEnterprisesData($filename);
+    processEnterpriseData($allEnterprises, $data, $filename);
 }
+
+/**
+ * Reads JSON input data from the request body
+ */
+function getJsonInputData() {
+    $jsonData = file_get_contents('php://input');
+    return json_decode($jsonData, true);
+}
+
+/**
+ * Validates the input data
+ */
+function isValidData($data) {
+    if (!$data || !isset($data['Siren'], $data['Raison_sociale'], $data['Adresse'])) {
+        return false;
+    }
+
+    if (!preg_match('/^[0-9]{9}$/', $data['Siren'])) {
+        return false;
+    }
+
+    if (trim($data['Raison_sociale']) === '') {
+        return false;
+    }
+
+    if (!isset($data['Adresse']['Code_postale']) || !preg_match('/^[0-9]{5}$/', (string)$data['Adresse']['Code_postale'])) {
+        return false;
+    }
+
+    if (trim($data['Adresse']['Ville']) === '') {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Retrieves the current stored enterprises data
+ */
+function getEnterprisesData($filename) {
+    $fileContent = file_get_contents($filename);
+    return json_decode($fileContent, true) ?? [];
+}
+
+/**
+ * Processes the new enterprise data
+ */
+function processEnterpriseData($allEnterprises, $data, $filename) {
+    $enterprises = $allEnterprises['save_enterprises'] ?? [];
+
+    if (isset($enterprises[$data['Siren']])) {
+        sendResponse(409, ["erreur" => "Entreprise déjà existante"]);
+        return;
+    }
+
+    addNewEnterprise($enterprises, $data, $filename);
+}
+
+/**
+ * Adds a new enterprise to the data and saves it
+ */
+function addNewEnterprise(&$enterprises, $data, $filename) {
+    $enterprises[$data['Siren']] = $data;
+    $allEnterprises['save_enterprises'] = $enterprises;
+    file_put_contents($filename, json_encode($allEnterprises, JSON_PRETTY_PRINT));
+    sendResponse(201, [
+        'message' => 'Entreprise créée',
+        '_links' => [
+                    'self' => [
+                        'href' => '/api-ouverte-ent.php?siren='.$data['Siren'],
+                    ]
+                ],
+        ]
+    );
+}
+
+/**
+ * Sends an HTTP response with the given status code and data
+ */
+function sendResponse($statusCode, $data) {
+    http_response_code($statusCode);
+    header('Content-Type: application/json');
+    echo is_array($data) ? json_encode($data, JSON_PRETTY_PRINT) : $data;
+}
+
+handleRequest($filename, $_SERVER['REQUEST_METHOD']);
 
 ?>
