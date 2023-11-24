@@ -1,5 +1,21 @@
 {
     "save_enterprises": {
+        "887749208": {
+            "siren": "887749208",
+            "siret": "88774920800013",
+            "Raison_sociale": "SKYLOUD",
+            "Adresse": {
+                "Num": 3,
+                "Voie": "PL GIOVANNI DA VERRAZZANO",
+                "Code_postal": "69009",
+                "Ville": "LYON 9EME",
+                "Geo_adresse": "3 PL GIOVANNI DA VERRAZZANO 69009 LYON 9EME",
+                "GPS": {
+                    "Latitude": "45.787574",
+                    "Longitude": "4.812653"
+                }
+            }
+        },
         "791052525": {
             "siren": "791052525",
             "siret": "79105252500015",
@@ -49,16 +65,16 @@
             }
         },
         "123456789": {
-            "Siren": 123456789,
+            "Siren": "123456789",
             "Raison_sociale": "GOATNESS",
             "Adresse": {
                 "Num": 3,
                 "Voie": "Rue de la paix",
-                "Code_postale": 54061,
+                "Code_postale": "54061",
                 "Ville": "Lyon",
                 "GPS": {
-                    "Latitude": 4.1,
-                    "Longitude": 38.4
+                    "Latitude": "4.1",
+                    "Longitude": "38.4"
                 }
             }
         }

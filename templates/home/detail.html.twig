@@ -1,97 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ma page de détail{% endblock %}
-
+{% block title %}{{ enterprise.getRaisonSociale() }}{% endblock %}
 
 {% block body %}
 
 <div class="example-wrapper">
   <div class="container mt-5">
     <h1 class="text-center mb-4">Information sur l'Entreprise</h1>
-    <div class="row">
+    <div class="d-flex justify-content-center">
       <div class="col-md-6">
         <div class="card">
           <div class="card-header text-center">
-              <h2>{{ enterprise.getRaisonSociale() }}</h2>
+            <h2>{{ enterprise.getRaisonSociale() }}</h2>
           </div>
           <div class="card-body text-center">
-              <p><strong>SIREN:</strong> {{ enterprise.getSiren() }}</p>
-              <p><strong>SIRET:</strong> {{ enterprise.getSiret() }}</p>
-              <p><strong>Adresse Géographique:</strong> {{ enterprise.getAdresse()["Geo_adresse"] }}</p>
-              <h3>Coordonées GPS</h3>
-              <p><strong>Latitude:</strong> {{ enterprise.getAdresse()["GPS"]["Latitude"] }}</p>
-              <p><strong>Longitude:</strong> {{ enterprise.getAdresse()["GPS"]["Longitude"] }}</p>
+            <p><strong>SIREN:</strong> {{ enterprise.getSiren() }}</p>
+            <p><strong>SIRET:</strong> {{ enterprise.getSiret() }}</p>
+            <p><strong>Adresse Géographique:</strong> {{ enterprise.getAdresse()["Geo_adresse"] }}</p>
+            <h3>Coordonées GPS</h3>
+            <p><strong>Latitude:</strong> {{ enterprise.getAdresse()["GPS"]["Latitude"] }}</p>
+            <p><strong>Longitude:</strong> {{ enterprise.getAdresse()["GPS"]["Longitude"] }}</p>
           </div>
         </div>
       </div>
-      
-       <div class="col-md-6">
-        <div class="card">
-          <div class="card-body">
-            <h3 class="text-center">Saisir un salaire brut</h3>
-            <div class="input-group mb-3 gap-2">
-              <input type="text" class="form-control" id="salaireInput" placeholder="Salaire brut" aria-label="Salaire brut" aria-describedby="basic-addon2" onkeyup="formatSalaireInput()">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button">Faire le calcul</button>
-              </div>
-            </div>
-            <!-- Tableau de résultats -->
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Nature du contrat</th>
-                  <th>Salaire net</th>
-                  <th>Cotisation salariale</th>
-                  <th>Cout employeur</th>
-                  <th>Indemnité de fin contrat</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>CDI</td>
-                  <td>1200</td>
-                  <td>380</td>
-                  <td>800</td>
-                  <td>-</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
     </div>
   </div>
 </div>
-
-{% endblock %}
-
-{% block javascripts %}
-{# <script>
-  // Ajoutez cet écouteur d'événement au champ de saisie du salaire
-  document.getElementById('salaireInput').addEventListener('blur', function() {
-    formatSalaireInput(this);
-  });
-
-  function formatSalaireInput(input) {
-    var value = input.value;
-
-    // Remplacer les points utilisés pour les milliers (si présent) et remplacer les virgules par des points pour le format décimal
-    value = value.replace(/\./g, '').replace(/,/g, '.');
-
-    // Convertir la chaîne en un nombre flottant
-    var numberValue = parseFloat(value);
-
-    // Vérifier si la valeur convertie est un nombre
-    if (!isNaN(numberValue)) {
-      // Formater la valeur avec les milliers et les décimales appropriées
-      input.value = numberValue.toLocaleString('fr-FR', {
-        maximumFractionDigits: 2,
-        minimumFractionDigits: 2 // Assurer l'affichage de deux décimales
-      });
-    } else {
-      // Si la valeur n'est pas un nombre, réinitialiser l'input
-      input.value = '';
-    }
-  }
-</script> #}
 
 {% endblock %}

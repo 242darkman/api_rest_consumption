@@ -62,7 +62,6 @@ class UrssafApiService
 
             $result = [
                 'nodeValue' => $data['evaluate'][0]['nodeValue'],
-                'unit' => $data['evaluate'][0]['unit']
             ];
 
             return $result;
@@ -85,62 +84,73 @@ class UrssafApiService
     }
 
     public function evaluate(float $grossSalary, string $status){
-      $contractType = $this->getContractType($status);
-      $netSalaryPermanent = 0;
-      $netSalaryFixedTerm = 0;
-      $netSalaryApprenticeship = 0;
-      $minimumRemunerationInternship = 0;
-      $employerCost = 0;
-      $employeeContribution = 0;
-      $endOfContractIndemnity = 0;
+      try {
+        $contractType = $this->getContractType($status);
+        $netSalaryPermanent = 0;
+        $netSalaryFixedTerm = 0;
+        $netSalaryApprenticeship = 0;
+        $minimumRemunerationInternship = 0;
+        $employerCost = 0;
+        $employeeContribution = 0;
+        $endOfContractIndemnity = 0;
 
-      switch ($contractType) {
-        case 'CDI':
-          $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
-          $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
-          $netSalaryPermanent = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['permanent']);
+        switch ($contractType) {
+          case 'CDI':
+            $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
+            $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
+            $netSalaryPermanent = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['permanent']);
 
-          return [
-            'employee_contribution' => $employeeContribution,
-            'employer_cost' => $employerCost,
-            'net_salary' => $netSalaryPermanent,
-          ];
-          break;
+            return [
+              'contract_type' => $contractType,
+              'employee_contribution' => $employeeContribution,
+              'employer_cost' => $employerCost,
+              'net_salary' => $netSalaryPermanent,
+            ];
+            break;
 
-        case 'CDD':
-          $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
-          $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
-          $endOfContractIndemnity = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['end_of_contract_indemnity']);
-          $netSalaryFixedTerm = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['fixed_term']);
+          case 'CDD':
+            $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
+            $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
+            $endOfContractIndemnity = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['end_of_contract_indemnity']);
+            $netSalaryFixedTerm = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['fixed_term']);
 
-          return [
-            'employee_contribution' => $employeeContribution,
-            'employer_cost' => $employerCost,
-            'end_of_contract_indemnity' => $endOfContractIndemnity,
-            'net_salary' => $netSalaryFixedTerm,
-          ];
+            return [
+              'contract_type' => $contractType,
+              'employee_contribution' => $employeeContribution,
+              'employer_cost' => $employerCost,
+              'end_of_contract_indemnity' => $endOfContractIndemnity,
+              'net_salary' => $netSalaryFixedTerm,
+            ];
 
-        case 'apprentissage':
-          $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
-          $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
-          $netSalaryApprenticeship = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['apprenticeship']);
+          case 'apprentissage':
+            $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
+            $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
+            $netSalaryApprenticeship = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['apprenticeship']);
 
-          return [
-            'employee_contribution' => $employeeContribution,
-            'employer_cost' => $employerCost,
-            'net_salary' => $netSalaryApprenticeship,
-          ];
+            return [
+              'contract_type' => $contractType,
+              'employee_contribution' => $employeeContribution,
+              'employer_cost' => $employerCost,
+              'net_salary' => $netSalaryApprenticeship,
+            ];
 
-        case 'stage':
-          $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
-          $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
-          $minimumRemunerationInternship = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['internship']);
+          case 'stage':
+            $employeeContribution = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employee_contribution']);
+            $employerCost = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['employer_cost']);
+            $minimumRemunerationInternship = $this->calculateNetSalaryByStatus($grossSalary, $contractType, $this->expressions['internship']);
 
-          return [
-            'employee_contribution' => $employeeContribution,
-            'employer_cost' => $employerCost,
-            'net_salary' => $minimumRemunerationInternship,
-          ];
+            return [
+              'contract_type' => $contractType,
+              'employee_contribution' => $employeeContribution,
+              'employer_cost' => $employerCost,
+              'net_salary' => $minimumRemunerationInternship,
+            ];
+        }
+      } catch (\Exception $e) {
+        error_log('Error in UrssafApiService: ' . $e->getMessage());
+        return [
+            'error' => $e->getMessage()
+        ];
       }
     }
 }

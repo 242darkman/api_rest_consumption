@@ -26,6 +26,13 @@ class SalaireInputType extends AbstractType
                 'data' => 'permanent',
             ])
             ->add('grossSalary', NumberType::class, ['scale' => 2])
+            ->add('totalCddSalary', NumberType::class, [
+                'required' => false,
+                'scale' => 2,
+                'attr' => [
+                    'data-condition' => 'fixed_term' // Un attribut personnalisé pour gérer l'affichage conditionnel
+                ]
+            ])
         ;
     }
 
