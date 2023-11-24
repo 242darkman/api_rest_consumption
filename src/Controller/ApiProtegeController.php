@@ -22,7 +22,7 @@ class ApiProtegeController extends AbstractController
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    #[Route('/api-protege.php', name: 'api_protege_patch', methods: ['PATCH'])]
+    #[Route('/api-protege-patch.php', name: 'api_protege_patch', methods: ['PATCH'])]
     public function partialChange(Request $request, EnterpriseStorageService $enterpriseStorageService): Response
     {
         $token = $this->tokenStorage->getToken();
@@ -60,7 +60,7 @@ class ApiProtegeController extends AbstractController
         }
     }
 
-    #[Route('/api-protege.php', name: 'api_protege_delete', methods: ['DELETE'])]
+    #[Route('/api-protege-delete.php', name: 'api_protege_delete', methods: ['DELETE'])]
     public function delete(Request $request, EnterpriseStorageService $enterpriseStorageService): Response
     {
         $token = $this->tokenStorage->getToken();
